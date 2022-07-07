@@ -16,4 +16,4 @@ class BabbleTransformer(Transformer):
         return " ".join([t for t in toks])
 
     def start(self, toks):
-        return " ".join([t for t in toks])
+        return toks

@@ -7,7 +7,7 @@ from babble.parser import BabbleTransformer
 @pytest.mark.parametrize(
     "phrase,expected",
     [
-        ("word", "word"),
+        ("word", ["word"]),
     ],
 )
 def test_word(parser: Lark, transformer: BabbleTransformer, phrase: str, expected):

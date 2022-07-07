@@ -6,7 +6,6 @@ import pytest
 
 from click.testing import CliRunner
 
-from babble import babble
 from babble import cli
 
 

@@ -1,0 +1,17 @@
+[
+	{
+		"type": "intent",
+		"name": "my_foo_bar_baz_intent",
+		"rule": "foo bar baz"
+	},
+	{
+		"type": "intent",
+		"name": "my_foo_intent",
+		"rule": "foo"
+	},
+	{
+		"type": "intent",
+		"name": "my_foo_bar_intent",
+		"rule": "foo bar"
+	}
+]

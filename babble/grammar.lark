@@ -1,0 +1,17 @@
+start: intent
+
+// Define terminals. Terminals are approxiamately are single words.
+DOUBLE_QUOTED_STRING  : /"[^"]*"/
+SINGLE_QUOTED_STRING  : /'[^']*'/
+QUOTEDSTRING  : DOUBLE_QUOTED_STRING | SINGLE_QUOTED_STRING
+TERMINAL: WORD | STRING | QUOTEDSTRING  
+
+intent: TERMINAL
+
+
+// imports from terminal library
+%import common.WORD
+%import common.ESCAPED_STRING   -> STRING
+%import common.SIGNED_NUMBER    -> NUMBER
+%import common.WS    // 
+%ignore WS           // Disregard spaces in text

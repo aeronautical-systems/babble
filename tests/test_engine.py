@@ -17,7 +17,8 @@ def test_intents_are_sorted(engine: Engine):
         ("foo", True, "my_foo_intent"),
         ("foo bar", True, "my_foo_bar_intent"),
         ("foo bar baz", True, "my_foo_bar_baz_intent"),
-        ("foo bar xxx", False, "my_foo_bar_baz_intent"),
+        ("foo bar xxx", True, "my_foo_bar_intent"),
+        ("xxx foo bar baz", False, ""),
     ],
 )
 def test_evaluate_intent(engine: Engine, phrase, understood, intent):
@@ -26,4 +27,7 @@ def test_evaluate_intent(engine: Engine, phrase, understood, intent):
         assert isinstance(result, Understanding), "Failed to understand"
         assert result.intent == intent, "Failed evaluate the intention"
     else:
-        assert result is None, "Failed to understand"
+        if result:
+            err = f"Supprised to find intent: {result.intent}"
+            assert result is None, err
+        assert result is None

@@ -13,5 +13,15 @@
 		"type": "intent",
 		"name": "my_foo_bar_intent",
 		"rule": "foo bar"
+	},
+	{
+		"type": "entity",
+		"name": "foo",
+		"rule": "foo"
+	},
+	{
+		"type": "intent",
+		"name": "my_foo_bar_baz_intent",
+		"rule": "'xxx foo' bar baz"
 	}
 ]

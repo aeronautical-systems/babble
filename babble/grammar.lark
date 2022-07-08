@@ -1,10 +1,12 @@
 start: rule 
 
 // Define terminals. Terminals are approxiamately are single words.
+// TODO: Check if qouted stings are needed or if string is enough
 DOUBLE_QUOTED_STRING  : /"[^"]*"/
 SINGLE_QUOTED_STRING  : /'[^']*'/
 QUOTEDSTRING  : DOUBLE_QUOTED_STRING | SINGLE_QUOTED_STRING
-TERMINAL: WORD | STRING | QUOTEDSTRING  
+ENTITY  : "<" WORD ">" 
+TERMINAL  : WORD | STRING | QUOTEDSTRING | ENTITY
 
 rule: TERMINAL TERMINAL*
 

@@ -107,16 +107,14 @@ class Engine:
     ) -> Tuple[Optional[Dict], str]:
         print("*" * 68)
 
-        # TODO: Implement for reference to other entities
         if is_entity(classifier):
             entity_name = get_entity_name(classifier)
             entity = self.entities[entity_name]
             rule = entity.get("rule", "")
+            tree = self.parser.parse(rule)
         else:
-            # The rule is simple: just the element
             rule = classifier
-
-        tree = self.parser.parse(rule)
+            tree = self.parser.parse(rule)
 
         words_to_test = []
         for word in phrase.split():

@@ -7,7 +7,7 @@
 	{
 		"type": "intent",
 		"name": "my_foo_intent",
-		"rule": "foo"
+		"rule": "<foo>"
 	},
 	{
 		"type": "intent",

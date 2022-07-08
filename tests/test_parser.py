@@ -9,9 +9,10 @@ from babble.parser import BabbleTransformer
     [
         ("word", ["word"]),
         ("word word", ["word", "word"]),
-        ("'word' word", ["word", "word"]),
+        ('"word" word', ["word", "word"]),
         ("'word123' word", ["word123", "word"]),
         ("'word123' word word", ["word123", "word", "word"]),
+        ("'word word' word", ["word word", "word"]),
         ("'word word' word", ["word word", "word"]),
     ],
 )

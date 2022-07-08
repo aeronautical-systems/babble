@@ -21,7 +21,7 @@
 	},
 	{
 		"type": "intent",
-		"name": "my_foo_bar_baz_intent",
+		"name": "my_xxx_foo_bar_baz_intent",
 		"rule": "'xxx foo' bar baz"
 	}
 ]

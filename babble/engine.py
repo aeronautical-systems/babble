@@ -96,6 +96,8 @@ class Engine:
         self, classifier: str, phrase: str
     ) -> Tuple[Optional[Dict], str]:
         print("*" * 68)
+
+        # TODO: Implement for reference to other entities
         if is_entity(classifier):
             entity_name = get_entity_name(classifier)
             entity = self.entities[entity_name]
@@ -111,7 +113,9 @@ class Engine:
             words_to_test.append(word)
             phrase_to_test = " ".join(words_to_test)
             print(f"{phrase_to_test} == {rule}")
-            if phrase_to_test == rule:
+            # TODO: User transformer to evalute this
+            # TODO: Is find correct or do we need optionals here?
+            if phrase_to_test.find(rule) > -1:
                 phrase = phrase.replace(phrase_to_test, "")
                 return {}, phrase
         return None, phrase

@@ -51,6 +51,9 @@ class RuleTransformer(Transformer):
                 return tok
         return None
 
+    def group(self, toks):
+        return toks[0]
+
     def start(self, toks):
         for tok in toks[0]:
             print(tok, self.phrase)

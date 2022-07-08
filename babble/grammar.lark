@@ -9,7 +9,8 @@ ENTITY  : "<" WORD ">"
 TERMINAL  : WORD | STRING | QUOTEDSTRING | ENTITY
 
 alternative: TERMINAL ("|" TERMINAL)+
-rule: TERMINAL* | alternative
+group: "(" (alternative | TERMINAL*) ")"
+rule: TERMINAL* | alternative | group
 
 
 // imports from terminal library

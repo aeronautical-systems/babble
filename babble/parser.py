@@ -21,7 +21,7 @@ def dequote(string: str) -> str:
         return string
 
 
-class BabbleTransformer(Transformer):
+class IntentTransformer(Transformer):
     def rule(self, toks):
         result = []
         for tok in toks:

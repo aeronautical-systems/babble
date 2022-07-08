@@ -1,7 +1,7 @@
 import json
 from typing import Optional, Dict, List, Tuple
 
-from babble.parser import BabbleTransformer, RuleTransformer, create_parser
+from babble.parser import IntentTransformer, RuleTransformer, create_parser
 
 
 class Understanding:
@@ -37,7 +37,7 @@ class Engine:
 
         # Load intents
         self.parser = create_parser()
-        self.transformer = BabbleTransformer()
+        self.transformer = IntentTransformer()
         self.intents: List[Dict] = self._load_intents()
         self.entities: Dict[str, Dict] = self._load_entities()
 
@@ -81,7 +81,7 @@ class Engine:
         print("#" * 68)
 
         tree = self.parser.parse(rule)
-        classifieres = BabbleTransformer().transform(tree)
+        classifieres = IntentTransformer().transform(tree)
 
         understanding = Understanding(
             phrase, intent=intention, required_matched_classifiers=len(classifieres)

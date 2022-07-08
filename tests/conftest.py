@@ -2,7 +2,7 @@ import pytest
 import os
 from lark.lark import Lark
 
-from babble.parser import create_parser, BabbleTransformer
+from babble.parser import create_parser, IntentTransformer
 from babble.engine import Engine
 
 
@@ -12,8 +12,8 @@ def parser() -> Lark:
 
 
 @pytest.fixture
-def transformer() -> BabbleTransformer:
-    return BabbleTransformer()
+def transformer() -> IntentTransformer:
+    return IntentTransformer()
 
 
 @pytest.fixture

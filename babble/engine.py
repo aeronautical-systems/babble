@@ -1,7 +1,7 @@
 import json
 from typing import Optional, Dict, List, Tuple
 
-from babble.parser import BabbleTransformer, create_parser
+from babble.parser import BabbleTransformer, RuleTransformer, create_parser
 
 
 class Understanding:
@@ -116,16 +116,16 @@ class Engine:
             # The rule is simple: just the element
             rule = classifier
 
-        # tree = self.parser.parse(rule)
+        tree = self.parser.parse(rule)
 
         words_to_test = []
         for word in phrase.split():
             words_to_test.append(word)
             phrase_to_test = " ".join(words_to_test)
             print(f"{phrase_to_test} == {rule}")
-            # TODO: User transformer to evalute this
-            # TODO: Is find correct or do we need optionals here?
-            if phrase_to_test.find(rule) > -1:
+            rule_transformer = RuleTransformer(phrase=phrase_to_test)
+            found = rule_transformer.transform(tree)
+            if found:
                 phrase = phrase.replace(phrase_to_test, "")
                 return {}, phrase
         return None, phrase

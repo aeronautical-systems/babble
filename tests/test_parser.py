@@ -1,7 +1,7 @@
 from lark.lark import Lark
 import pytest
 
-from babble.parser import BabbleTransformer
+from babble.parser import BabbleTransformer, RuleTransformer
 
 
 @pytest.mark.parametrize(
@@ -18,5 +18,21 @@ from babble.parser import BabbleTransformer
 )
 def test_terminals(parser: Lark, transformer: BabbleTransformer, phrase: str, expected):
     tree = parser.parse(phrase)
+    result = transformer.transform(tree)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    "rule, phrase, expected",
+    [
+        ("word", "word", "word"),
+        ("foo bar", "bar", None),
+        ("foo bar", "foo bar", "foo bar"),
+        ("bar", "foo bar", "bar"),
+    ],
+)
+def test_rules(parser: Lark, rule: str, phrase: str, expected):
+    tree = parser.parse(rule)
+    transformer = RuleTransformer(phrase)
     result = transformer.transform(tree)
     assert result == expected

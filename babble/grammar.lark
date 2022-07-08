@@ -1,4 +1,4 @@
-start: intent
+start: rule 
 
 // Define terminals. Terminals are approxiamately are single words.
 DOUBLE_QUOTED_STRING  : /"[^"]*"/
@@ -6,7 +6,7 @@ SINGLE_QUOTED_STRING  : /'[^']*'/
 QUOTEDSTRING  : DOUBLE_QUOTED_STRING | SINGLE_QUOTED_STRING
 TERMINAL: WORD | STRING | QUOTEDSTRING  
 
-intent: TERMINAL TERMINAL*
+rule: TERMINAL TERMINAL*
 
 
 // imports from terminal library

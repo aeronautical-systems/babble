@@ -22,7 +22,7 @@ def dequote(string: str) -> str:
 
 
 class BabbleTransformer(Transformer):
-    def intent(self, toks):
+    def rule(self, toks):
         result = []
         for tok in toks:
             result.append(dequote(tok.value))
@@ -37,7 +37,7 @@ class RuleTransformer(Transformer):
         super().__init__(visit_tokens)
         self.phrase = phrase
 
-    def intent(self, toks):
+    def rule(self, toks):
         result = []
         for tok in toks:
             result.append(tok.value)

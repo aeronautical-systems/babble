@@ -7,11 +7,23 @@ from babble.parser import BabbleTransformer, create_parser
 class Understanding:
     """Understanding is the result of the evaluation of a phrase."""
 
-    def __init__(self, phrase: str, intent: str):
+    def __init__(self, phrase: str, intent: str, required_matched_classifiers: int):
         self.phrase: str = phrase
         """Origin phrase from which the understanding was build"""
         self.intent: str = intent
         """Intention which could be understood from the origin phrase"""
+        self.slots: List[Dict[str, str]] = []
+        """Slots store informations related to the understanding of the
+        phrase"""
+        self.required_matched_classifiers: int = required_matched_classifiers
+        """Number of required classifieres to be found"""
+
+    def add_slot(self, slot: dict):
+        self.slots.append(slot)
+
+    def is_complete(self) -> bool:
+        """Returns true if we found slots at least slots"""
+        return len(self.slots) == self.required_matched_classifiers
 
 
 class Engine:
@@ -67,12 +79,13 @@ class Engine:
         print("#" * 68)
         print(f"{intention} -> {phrase}")
         print("#" * 68)
-        understanding = Understanding(phrase, intent=intention)
-        slots = []
 
         tree = self.parser.parse(rule)
         classifieres = BabbleTransformer().transform(tree)
-        required_matches = len(classifieres)
+
+        understanding = Understanding(
+            phrase, intent=intention, required_matched_classifiers=len(classifieres)
+        )
 
         # Iterate of every entity in the intent
         rest_of_phrase_to_test = phrase
@@ -83,12 +96,9 @@ class Engine:
                 classifier, rest_of_phrase_to_test
             )
 
-            # TODO: Added slots directly to understanding and ask understanding
-            # of it is complete.
             if slot is not None:
-                slots.append(slot)
-                # If we found all classifieres than we
-                if len(slots) == required_matches:
+                understanding.add_slot(slot)
+                if understanding.is_complete():
                     return understanding
         return None
 

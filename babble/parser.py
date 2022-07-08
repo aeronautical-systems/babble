@@ -40,8 +40,16 @@ class RuleTransformer(Transformer):
     def rule(self, toks):
         result = []
         for tok in toks:
+            if tok is None:
+                continue
             result.append(tok.value)
         return [" ".join(result)]
+
+    def alternative(self, toks):
+        for tok in toks:
+            if self.phrase.find(tok) > -1:
+                return tok
+        return None
 
     def start(self, toks):
         for tok in toks[0]:

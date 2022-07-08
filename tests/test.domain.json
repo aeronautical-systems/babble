@@ -22,6 +22,11 @@
 	{
 		"type": "intent",
 		"name": "my_xxx_foo_bar_baz_intent",
-		"rule": "'xxx foo' bar baz"
+		"rule": "'xxx foo' bar <opt>"
+	},
+	{
+		"type": "entity",
+		"name": "opt",
+		"rule": "zzz|baz"
 	}
 ]

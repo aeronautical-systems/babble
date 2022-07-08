@@ -8,7 +8,8 @@ QUOTEDSTRING  : DOUBLE_QUOTED_STRING | SINGLE_QUOTED_STRING
 ENTITY  : "<" WORD ">" 
 TERMINAL  : WORD | STRING | QUOTEDSTRING | ENTITY
 
-rule: TERMINAL TERMINAL*
+alternative: TERMINAL ("|" TERMINAL)+
+rule: TERMINAL* | alternative
 
 
 // imports from terminal library

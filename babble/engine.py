@@ -70,11 +70,8 @@ class Engine:
         understanding = Understanding(phrase, intent=intention)
         slots = []
 
-        # TODO: Split classifiers correct. Take care of quoted strings. Use
-        # Special Transformer for this?
-        # tree = self.parser.parse(rule)
-        # classifieres = BabbleTransformer().transform(tree)
-        classifieres = rule.split()
+        tree = self.parser.parse(rule)
+        classifieres = BabbleTransformer().transform(tree)
         required_matches = len(classifieres)
 
         # Iterate of every entity in the intent

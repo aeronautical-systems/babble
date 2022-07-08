@@ -11,9 +11,21 @@ def create_parser() -> Lark:
         return Lark(f)
 
 
+def dequote(string: str) -> str:
+    if string.startswith("'"):
+        return string.lstrip("'").rstrip("'")
+    elif string.startswith('"'):
+        return string.lstrip('"').rstrip('"')
+    else:
+        return string
+
+
 class BabbleTransformer(Transformer):
     def intent(self, toks):
-        return " ".join([t for t in toks])
+        result = []
+        for tok in toks:
+            result.append(dequote(tok.value))
+        return result
 
     def start(self, toks):
-        return toks
+        return toks[0]

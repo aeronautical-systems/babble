@@ -30,6 +30,31 @@
 		"rule": "foo <triplenumber>"
 	},
 	{
+		"type": "intent",
+		"name": "set_timer",
+		"rule": "<set> <ressource> <number> <unit>"
+	},
+	{
+		"type": "entity",
+		"name": "set",
+		"rule": "set{command}"
+	},
+	{
+		"type": "entity",
+		"name": "ressource",
+		"rule": "timer"
+	},
+	{
+		"type": "entity",
+		"name": "unit",
+		"rule": "minutes|minute|hours|hour"
+	},
+	{
+		"type": "entity",
+		"name": "number",
+		"rule": "zero|one|two|three|four|five|six|seven|eight|((nine|niner):niner){value}"
+	},
+	{
 		"type": "entity",
 		"name": "opt",
 		"rule": "zzz|baz"
@@ -38,10 +63,5 @@
 		"type": "entity",
 		"name": "triplenumber",
 		"rule": "<number> <number> <number>"
-	},
-	{
-		"type": "entity",
-		"name": "number",
-		"rule": "zero|one|two|three|four|five|six|seven|eight|((nine|niner):niner)"
 	}
 ]

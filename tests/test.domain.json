@@ -27,12 +27,17 @@
 	{
 		"type": "intent",
 		"name": "my_foo_multi_number",
-		"rule": "foo <number> <number> <number>"
+		"rule": "foo <triplenumber>"
 	},
 	{
 		"type": "entity",
 		"name": "opt",
 		"rule": "zzz|baz"
+	},
+	{
+		"type": "entity",
+		"name": "triplenumber",
+		"rule": "<number> <number> <number>"
 	},
 	{
 		"type": "entity",

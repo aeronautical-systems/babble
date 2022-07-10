@@ -94,6 +94,23 @@ class Engine:
                 return understanding
         return None
 
+    def _expand_classifiers(
+        self, classifiers: List[str], expanded_classifiers: List[str]
+    ) -> List[str]:
+        for classifier in classifiers:
+            if is_entity(classifier):
+                entity_name = get_entity_name(classifier)
+                entity = self.entities[entity_name]
+                rule = entity["rule"]
+                if is_entity(rule):
+                    tree = self.parser.parse(rule)
+                    result = IntentTransformer().transform(tree)
+                    return self._expand_classifiers(
+                        classifiers=result, expanded_classifiers=expanded_classifiers
+                    )
+            expanded_classifiers.append(classifier)
+        return expanded_classifiers
+
     def _evaluate_intent(self, intent: Dict, phrase: str) -> Optional[Understanding]:
         rule = intent.get("rule", "")
         intention = intent.get("name", "")
@@ -102,15 +119,18 @@ class Engine:
         log.debug("#" * 68)
 
         tree = self.parser.parse(rule)
-        classifieres = IntentTransformer().transform(tree)
+        classifiers = IntentTransformer().transform(tree)
+        expanded_classifiers = self._expand_classifiers(classifiers, [])
 
         understanding = Understanding(
-            phrase, intent=intention, required_matched_classifiers=len(classifieres)
+            phrase,
+            intent=intention,
+            required_matched_classifiers=len(expanded_classifiers),
         )
 
         # Iterate of every entity in the intent
         rest_of_phrase_to_test = phrase
-        for classifier in classifieres:
+        for classifier in expanded_classifiers:
 
             # Evaluate and update the remaining phrase to test.
             slot, rest_of_phrase_to_test = self._evaluate_classifier(
@@ -123,20 +143,20 @@ class Engine:
                     return understanding
         return None
 
+    def _resolve_rule_from_classifier(self, classifier: str) -> str:
+        if is_entity(classifier):
+            entity_name = get_entity_name(classifier)
+            entity = self.entities[entity_name]
+            return entity.get("rule", "")
+        return classifier
+
     def _evaluate_classifier(
         self, classifier: str, phrase: str
     ) -> Tuple[Optional[Dict], str]:
         log.debug("*" * 68)
 
-        if is_entity(classifier):
-            entity_name = get_entity_name(classifier)
-            entity = self.entities[entity_name]
-            rule = entity.get("rule", "")
-            tree = self.parser.parse(rule)
-        else:
-            rule = classifier
-            entity_name = classifier
-            tree = self.parser.parse(rule)
+        rule = self._resolve_rule_from_classifier(classifier=classifier)
+        tree = self.parser.parse(rule)
 
         words_to_test = []
         for word in phrase.split():
@@ -147,7 +167,7 @@ class Engine:
             found, tag = rule_transformer.transform(tree)
             if found:
                 phrase = phrase.replace(phrase_to_test, "")
-                slot = dict(name=entity_name, value=found, tag=tag)
+                slot = dict(name=get_entity_name(classifier), value=found, tag=tag)
                 return slot, phrase
         return None, phrase
 

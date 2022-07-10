@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Optional, Dict, List, Tuple
+from typing import Optional, Dict, List, Tuple, Union
 
 from babble.parser import IntentTransformer, RuleTransformer, create_parser
 
@@ -15,22 +15,36 @@ class Understanding:
         """Origin phrase from which the understanding was build"""
         self.intent: str = intent
         """Intention which could be understood from the origin phrase"""
-        self.slots: List[Dict[str, str]] = []
+        self.slots: List[Dict[str, Union[str, List[str]]]] = []
         """Slots store informations related to the understanding of the
         phrase"""
         self.required_matched_classifiers: int = required_matched_classifiers
         """Number of required classifieres to be found"""
 
-    def as_dict(self):
-
+    def as_dict(self) -> Dict:
         return {"input": self.phrase, "intent": self.intent, "slots": self.slots}
 
     def add_slot(self, slot: dict):
-        self.slots.append(slot)
+        found = None
+        for s in self.slots:
+            if s["name"] == slot["name"]:
+                # Add more values to the exiting slot.
+                if not isinstance(s["value"], list):
+                    s["value"] = [s["value"]]
+                s["value"].append(slot["value"])
+                break
+        else:
+            self.slots.append(slot)
 
     def is_complete(self) -> bool:
         """Returns true if we found slots at least slots"""
-        return len(self.slots) == self.required_matched_classifiers
+        count = 0
+        for slot in self.slots:
+            if isinstance(slot["value"], list):
+                count += len(slot["value"])
+            else:
+                count += 1
+        return count == self.required_matched_classifiers
 
 
 class Engine:

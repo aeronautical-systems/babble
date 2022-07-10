@@ -35,3 +35,10 @@ def test_evaluate_intent(engine: Engine, phrase, understood, intent):
             err = f"Supprised to find intent: {result.intent}"
             assert result is None, err
         assert result is None
+
+
+def test_multi_number(engine: Engine):
+    result = engine.evaluate("foo one two three")
+    assert result is not None
+    assert result.intent == "my_foo_multi_number"
+    assert result.slots[1]["value"] == ["one", "two", "three"]

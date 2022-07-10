@@ -1,7 +1,10 @@
 import json
+import logging
 from typing import Optional, Dict, List, Tuple
 
 from babble.parser import IntentTransformer, RuleTransformer, create_parser
+
+log = logging.getLogger("babble")
 
 
 class Understanding:
@@ -80,9 +83,9 @@ class Engine:
     def _evaluate_intent(self, intent: Dict, phrase: str) -> Optional[Understanding]:
         rule = intent.get("rule", "")
         intention = intent.get("name", "")
-        print("#" * 68)
-        print(f"{intention} -> {phrase}")
-        print("#" * 68)
+        log.debug("#" * 68)
+        log.debug(f"{intention} -> {phrase}")
+        log.debug("#" * 68)
 
         tree = self.parser.parse(rule)
         classifieres = IntentTransformer().transform(tree)
@@ -109,7 +112,7 @@ class Engine:
     def _evaluate_classifier(
         self, classifier: str, phrase: str
     ) -> Tuple[Optional[Dict], str]:
-        print("*" * 68)
+        log.debug("*" * 68)
 
         if is_entity(classifier):
             entity_name = get_entity_name(classifier)
@@ -125,7 +128,7 @@ class Engine:
         for word in phrase.split():
             words_to_test.append(word)
             phrase_to_test = " ".join(words_to_test)
-            print(f"{phrase_to_test} == {rule}")
+            log.debug(f"{phrase_to_test} == {rule}")
             rule_transformer = RuleTransformer(phrase=phrase_to_test)
             found, tag = rule_transformer.transform(tree)
             if found:

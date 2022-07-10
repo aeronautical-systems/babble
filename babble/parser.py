@@ -50,7 +50,7 @@ class RuleTransformer(Transformer):
         return toks[0][0]
 
     def tagging(self, toks):
-        self.tag = toks[1]
+        self.tag = toks[1].value
         return toks[0][0]
 
     def alternative(self, toks):

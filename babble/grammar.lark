@@ -10,7 +10,8 @@ TERMINAL  : WORD | STRING | QUOTEDSTRING | ENTITY
 
 alternative: TERMINAL ("|" TERMINAL)+
 group: "(" (alternative | TERMINAL*) ")"
-rule: TERMINAL* | alternative | group
+subst: rule ":" TERMINAL 
+rule: TERMINAL* | alternative | group | subst
 
 
 // imports from terminal library

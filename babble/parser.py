@@ -38,12 +38,15 @@ class RuleTransformer(Transformer):
         self.phrase = phrase
 
     def rule(self, toks):
-        result = []
-        for tok in toks:
-            if tok is None:
-                continue
-            result.append(tok.value)
-        return [" ".join(result)]
+        if self.phrase.find(" ".join(t for t in toks if t is not None)) > -1:
+            return toks
+        return None
+
+    def subst(self, toks):
+        if toks[0][0] and self.phrase.find(toks[0][0]) > -1:
+            self.phrase = toks[1]
+            return toks[1]
+        return toks[0][0]
 
     def alternative(self, toks):
         for tok in toks:
@@ -55,8 +58,7 @@ class RuleTransformer(Transformer):
         return toks[0]
 
     def start(self, toks):
-        for tok in toks[0]:
-            print(tok, self.phrase)
-            if self.phrase.find(tok) > -1:
-                return tok
+        result = toks[0]
+        if result:
+            return " ".join(t for t in result if t is not None) or None
         return None

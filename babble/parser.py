@@ -55,6 +55,8 @@ class RuleTransformer(Transformer):
 
     def alternative(self, toks):
         for tok in toks:
+            if tok is None:
+                continue
             if self.phrase.find(tok) > -1:
                 return tok
         return None

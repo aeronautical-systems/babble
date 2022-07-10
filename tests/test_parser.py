@@ -38,10 +38,15 @@ def test_terminals(parser: Lark, transformer: IntentTransformer, phrase: str, ex
         ("(foo|bar):baz", "fuu", (None, None)),
         ("(foo|bar):baz{xxx}", "fuu", (None, "xxx")),
         ("(foo|bar):baz{xxx}", "bar", ("baz", "xxx")),
+        ("foo|bar|baz|buz:buz", "foo", ("buz", None)),
+        ("foo|bar|(baz|buz):buz", "baz", ("buz", None)),
+        ("foo|bar|((baz|buz):buz)", "foo", ("foo", None)),
+        ("foo|bar|(baz|buz):buz", "biz", (None, None)),
     ],
 )
 def test_rules(parser: Lark, rule: str, phrase: str, expected):
     tree = parser.parse(rule)
+    print(tree.pretty())
     transformer = RuleTransformer(phrase)
     result = transformer.transform(tree)
     assert result == expected

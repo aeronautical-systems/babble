@@ -37,6 +37,6 @@
 	{
 		"type": "entity",
 		"name": "number",
-		"rule": "zero|one|two|three|four|five|six|seven|eight|nine|niner"
+		"rule": "zero|one|two|three|four|five|six|seven|eight|((nine|niner):niner)"
 	}
 ]

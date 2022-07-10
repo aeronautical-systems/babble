@@ -8,8 +8,8 @@ QUOTEDSTRING  : DOUBLE_QUOTED_STRING | SINGLE_QUOTED_STRING
 ENTITY  : "<" WORD ">" 
 TERMINAL  : WORD | STRING | QUOTEDSTRING | ENTITY
 
-alternative: TERMINAL ("|" TERMINAL)+
-group: "(" (alternative | TERMINAL*) ")"
+alternative: (TERMINAL | group) ("|" (TERMINAL | group))+ 
+group: "(" (alternative | TERMINAL* | subst) ")"
 subst: rule ":" TERMINAL 
 tagging: rule "{" TERMINAL "}"
 rule: TERMINAL* | alternative | group | subst | tagging

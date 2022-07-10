@@ -65,5 +65,8 @@ class RuleTransformer(Transformer):
     def start(self, toks):
         result = toks[0]
         if result:
-            return " ".join(t for t in result if t is not None).strip() or None, self.tag
+            return (
+                " ".join(t for t in result if t is not None).strip() or None,
+                self.tag,
+            )
         return None, self.tag

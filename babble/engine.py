@@ -18,6 +18,10 @@ class Understanding:
         self.required_matched_classifiers: int = required_matched_classifiers
         """Number of required classifieres to be found"""
 
+    def as_dict(self):
+
+        return {"input": self.phrase, "intent": self.intent, "slots": self.slots}
+
     def add_slot(self, slot: dict):
         self.slots.append(slot)
 
@@ -114,6 +118,7 @@ class Engine:
             tree = self.parser.parse(rule)
         else:
             rule = classifier
+            entity_name = classifier
             tree = self.parser.parse(rule)
 
         words_to_test = []
@@ -125,7 +130,7 @@ class Engine:
             found, tag = rule_transformer.transform(tree)
             if found:
                 phrase = phrase.replace(phrase_to_test, "")
-                slot = dict(name=classifier, value=found, tag=tag)
+                slot = dict(name=entity_name, value=found, tag=tag)
                 return slot, phrase
         return None, phrase
 

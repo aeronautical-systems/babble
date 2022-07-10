@@ -29,6 +29,7 @@ def test_evaluate_intent(engine: Engine, phrase, understood, intent):
     if understood:
         assert isinstance(result, Understanding), "Failed to understand"
         assert result.intent == intent, "Found wrong intent"
+        assert len(result.slots) != 0
     else:
         if result:
             err = f"Supprised to find intent: {result.intent}"

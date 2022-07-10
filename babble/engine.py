@@ -122,10 +122,11 @@ class Engine:
             phrase_to_test = " ".join(words_to_test)
             print(f"{phrase_to_test} == {rule}")
             rule_transformer = RuleTransformer(phrase=phrase_to_test)
-            found = rule_transformer.transform(tree)
+            found, tag = rule_transformer.transform(tree)
             if found:
                 phrase = phrase.replace(phrase_to_test, "")
-                return {}, phrase
+                slot = dict(name=classifier, value=found, tag=tag)
+                return slot, phrase
         return None, phrase
 
 

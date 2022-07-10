@@ -36,6 +36,7 @@ class RuleTransformer(Transformer):
     def __init__(self, phrase: str, visit_tokens: bool = True) -> None:
         super().__init__(visit_tokens)
         self.phrase = phrase
+        self.tag: Optional[str] = None
 
     def rule(self, toks):
         if self.phrase.find(" ".join(t for t in toks if t is not None)) > -1:
@@ -46,6 +47,10 @@ class RuleTransformer(Transformer):
         if toks[0][0] and self.phrase.find(toks[0][0]) > -1:
             self.phrase = toks[1]
             return toks[1]
+        return toks[0][0]
+
+    def tagging(self, toks):
+        self.tag = toks[1]
         return toks[0][0]
 
     def alternative(self, toks):

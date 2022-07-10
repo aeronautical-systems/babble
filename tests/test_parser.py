@@ -36,6 +36,8 @@ def test_terminals(parser: Lark, transformer: IntentTransformer, phrase: str, ex
         ("foo:bar", "foo", "bar"),
         ("(foo|bar):baz", "foo", "baz"),
         ("(foo|bar):baz", "fuu", None),
+        ("(foo|bar):baz{xxx}", "fuu", None),
+        ("(foo|bar):baz{xxx}", "bar", "baz"),
     ],
 )
 def test_rules(parser: Lark, rule: str, phrase: str, expected):

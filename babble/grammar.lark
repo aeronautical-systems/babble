@@ -11,7 +11,8 @@ TERMINAL  : WORD | STRING | QUOTEDSTRING | ENTITY
 alternative: TERMINAL ("|" TERMINAL)+
 group: "(" (alternative | TERMINAL*) ")"
 subst: rule ":" TERMINAL 
-rule: TERMINAL* | alternative | group | subst
+tagging: rule "{" TERMINAL "}"
+rule: TERMINAL* | alternative | group | subst | tagging
 
 
 // imports from terminal library

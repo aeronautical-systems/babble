@@ -22,7 +22,16 @@ class Understanding:
         """Number of required classifieres to be found"""
 
     def as_dict(self) -> Dict:
-        return {"input": self.phrase, "intent": self.intent, "slots": self.slots}
+        result = {"input": self.phrase, "intent": self.intent, "slots": self.slots}
+
+        processed = []
+        for slot in self.slots:
+            value = slot["value"]
+            if isinstance(value, list):
+                value = " ".join(value)
+            processed.append(value)
+        result["processed"] = " ".join(processed)
+        return result
 
     def add_slot(self, slot: dict):
         found = None

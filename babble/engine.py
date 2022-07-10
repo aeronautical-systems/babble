@@ -167,7 +167,9 @@ class Engine:
             found, tag = rule_transformer.transform(tree)
             if found:
                 phrase = phrase.replace(phrase_to_test, "")
-                slot = dict(name=get_entity_name(classifier), value=found, tag=tag)
+                slot = dict(name=get_entity_name(classifier), value=found)
+                if tag:
+                    slot["tag"] = tag
                 return slot, phrase
         return None, phrase
 

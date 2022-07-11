@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 from typing import Optional, Dict, List, Tuple, Union
 
 from babble.parser import IntentTransformer, RuleTransformer, create_parser
@@ -97,10 +98,19 @@ class Engine:
 
         # Try to match the given phrase with all intents. As soon as a matching
         # intent is found return it.
+        start = time.perf_counter()
         for intent in self.intents:
             understanding = self._evaluate_intent(intent, phrase)
             if understanding is not None:
+                stop = time.perf_counter()
+                log.info(
+                    f"Evaluated {len(self.intents)} intents in {stop - start:0.4f} seconds"
+                )
                 return understanding
+        stop = time.perf_counter()
+        log.info(
+            f"Evaluated {len(self.intents)} intents in {stop - start:0.4f} seconds"
+        )
         return None
 
     def _expand_classifiers(

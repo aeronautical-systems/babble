@@ -1,9 +1,13 @@
 import os
 from typing import List, Dict, Optional
+import logging
 
+from Levenshtein._levenshtein import distance
 from lark.lark import Lark
 from lark.visitors import Transformer
 
+
+log = logging.getLogger("babble")
 BABBLE_PATH_GRAMMAR = os.path.join(os.getcwd(), "babble", "grammar.lark")
 
 
@@ -19,6 +23,35 @@ def dequote(string: str) -> str:
         return string.lstrip('"').rstrip('"')
     else:
         return string
+
+
+def find_in_phrase(phrase: str, to_find: str) -> bool:
+    """Will return True if `to_find` is found in `phrase`. The search is done
+    trying a exact match first. If it does not match than a fuzzy match using
+    levensthein is done"""
+
+    # Try to get a direct match
+    if phrase.find(to_find) > -1:
+        return True  # Fine! we have a exact match
+
+    # Ok, lets do a fuzzy match.
+    words_to_test = []
+    max_distance = int(len(to_find) / 5)
+
+    # The fuzzy match is done my building the phrase in reversed order! This is
+    # because the phrase might have grown with every new call:
+    # foo -> foo bar -> foo bar baz
+    # Now it is important to start from the end to check if we found a match to
+    # ignore irrelevant parts of the phrase (e.g "foo" if we are searching for
+    # "bar baz".
+    for word in reversed(phrase.split()):
+        words_to_test.insert(0, word)
+        phrase_to_test = " ".join(words_to_test)
+        d = distance(phrase_to_test, to_find)
+        if d <= max_distance:
+            log.debug(f"{phrase_to_test} -> {to_find} with distance {d}/{max_distance}")
+            return True  # Fine! We found it with some fuzzyness.
+    return False  # Nothing found
 
 
 class IntentTransformer(Transformer):
@@ -39,12 +72,12 @@ class RuleTransformer(Transformer):
         self.tag: Optional[str] = None
 
     def rule(self, toks):
-        if self.phrase.find(" ".join(t for t in toks if t is not None)) > -1:
+        if find_in_phrase(self.phrase, " ".join(t for t in toks if t is not None)):
             return toks
         return None
 
     def subst(self, toks):
-        if toks[0][0] and self.phrase.find(toks[0][0]) > -1:
+        if toks[0][0] and find_in_phrase(self.phrase, toks[0][0]):
             self.phrase = toks[1]
             return toks[1]
         return toks[0][0]
@@ -60,7 +93,7 @@ class RuleTransformer(Transformer):
         for tok in toks:
             if tok is None:
                 continue
-            if self.phrase.find(tok) > -1:
+            if find_in_phrase(self.phrase, tok):
                 return tok
         return None
 

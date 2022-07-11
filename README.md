@@ -92,6 +92,7 @@ Free software: MIT license
 ## Features
 
 * Intent recognition
+* Simple fuzzy machting of classifier using levenshtein distance.
 * Simple grammar for rules in entities:
   * alternatives ->  ``foo|bar|baz``
   * substitutions -> ``foo:bar``

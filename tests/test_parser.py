@@ -1,7 +1,7 @@
 from lark.lark import Lark
 import pytest
 
-from babble.parser import IntentTransformer, RuleTransformer
+from babble.parser import IntentTransformer, RuleTransformer, find_in_phrase
 
 
 @pytest.mark.parametrize(
@@ -46,7 +46,12 @@ def test_terminals(parser: Lark, transformer: IntentTransformer, phrase: str, ex
 )
 def test_rules(parser: Lark, rule: str, phrase: str, expected):
     tree = parser.parse(rule)
-    print(tree.pretty())
     transformer = RuleTransformer(phrase)
     result = transformer.transform(tree)
     assert result == expected
+
+
+@pytest.mark.parametrize("phrase,tofind,result", [("work force", "work horse", True)])
+def test_find_in_phrase(phrase, tofind, result):
+    result = find_in_phrase(phrase=phrase, to_find=tofind)
+    assert result is result

@@ -50,8 +50,11 @@ class RuleTransformer(Transformer):
         return toks[0][0]
 
     def tagging(self, toks):
-        self.tag = toks[1].value
-        return toks[0][0]
+        if toks[0] is None:
+            return toks[0]
+        else:
+            self.tag = toks[1].value
+            return toks[0][0]
 
     def alternative(self, toks):
         for tok in toks:

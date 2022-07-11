@@ -44,10 +44,9 @@ result:
                 {
                     "name": "set",
                     "value": "set",
-                    "tag": "command"
                 },
                 {
-                    "name": "ressource",
+                    "name": "timer",
                     "value": "timer"
                 },
                 {
@@ -60,7 +59,7 @@ result:
                     "value": "hour"
                 }
             ],
-            "processed": "set timer niner hour"
+            "processed": "set timer niner hours"
         }
 
 Awesome!
@@ -76,7 +75,6 @@ Use babble as cli:
 ### Lib
 
 Use babble as lib:
-
 
         from babble.engine import Engine, Understanding
         
@@ -97,7 +95,7 @@ Free software: MIT license
 * Simple grammar for rules in entities:
   * alternatives ->  ``foo|bar|baz``
   * substitutions -> ``foo:bar``
-  * tagging -> ``foo{bar}
+  * tagging -> ``foo{bar}``
 
 ## Authors
 

@@ -2,10 +2,53 @@
 
 Babble is a simple package for natural language understanding (NLU).
 
-Babble can be used to get the *intention* from a given phrase in a
-structured form. For that Babble must be configured by using a *domain
-configuration*. This is a JSON file which contains all intentions and
-entities within this domain:
+## Features
+
+* Rule based intent recognition
+* Simple fuzzy machting of classifiers using levenshtein distance.
+
+## Usage
+
+Install babble.
+
+        git checkout https://gitlab.com/irlaender/babble.git
+        cd babble
+        pip install -e .
+
+### Cli
+
+Use babble as cli:
+
+        babble --domain path/to/domain.json "Hello Word"
+
+### Lib
+
+Use babble as lib:
+
+        from babble.engine import Engine
+        
+        engine = Engine(path_to_domain_config="/path/to/domain.json")
+        understanding = engine.evaluate("Hello World")
+        if understanding:
+            print(understanding.as_dict())
+        else:
+            print("Not understood")
+
+## Licence
+
+Free software: MIT license
+
+## Configuration
+
+Babble needs to be configured by setting up its *domain*. The domain
+configuration is a JSON file and contains all *intentions* and rules with
+classifiers. Rules can be written using a easy but limited grammar.
+
+* alternatives ->  ``foo|bar|baz``
+* substitutions -> ``foo:bar``
+* tagging -> ``foo{bar}``
+
+Here is a example of domain configuration:
 
     [
         {
@@ -32,6 +75,8 @@ allows to define  more complicated rules for the classifier.
 The intention recognition follows a simple rule:
 Given a phrase, the intention is found when all classifiers can be
 found in exact in the order as defined in rule of the intention.
+
+## Example Result
 
 Let's say we are using the domain from above and want to get the intention of
 the following phrase: *set my fucking timer to nine hours*. This would be the
@@ -63,40 +108,6 @@ result:
         }
 
 Awesome!
-
-## Usage
-
-### Cli
-
-Use babble as cli:
-
-        babble --domain path/to/domain.json "Hello Word"
-
-### Lib
-
-Use babble as lib:
-
-        from babble.engine import Engine, Understanding
-        
-        engine = Engine(path_to_domain_config="/path/to/domain.json")
-        understanding = engine.evaluate("Hello World")
-        if understanding:
-            print(understanding.as_dict())
-        else:
-            print("Not understood")
-
-## Licence
-
-Free software: MIT license
-
-## Features
-
-* Intent recognition
-* Simple fuzzy machting of classifier using levenshtein distance.
-* Simple grammar for rules in entities:
-  * alternatives ->  ``foo|bar|baz``
-  * substitutions -> ``foo:bar``
-  * tagging -> ``foo{bar}``
 
 ## Authors
 

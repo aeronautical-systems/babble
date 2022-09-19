@@ -4,7 +4,7 @@ import logging
 from typing import Optional
 import click
 
-from babble.engine import Engine, Understanding
+from babble.nlp.engine import Engine, Understanding
 
 logging.basicConfig()
 log = logging.getLogger("babble")
@@ -18,9 +18,9 @@ def main(phrase: str, domain: str, verbose: int, args=None):
     """Console script for babble."""
 
     # Setup logging
-    if verbose == 1:
+    if verbose == 1:  # pragma: no cover
         log.setLevel(logging.INFO)
-    if verbose > 1:
+    if verbose > 1:  # pragma: no cover
         log.setLevel(logging.DEBUG)
 
     engine = Engine(domain)

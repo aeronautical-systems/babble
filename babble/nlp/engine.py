@@ -3,7 +3,7 @@ import logging
 import time
 from typing import Optional, Dict, List, Tuple, Union
 
-from babble.parser import IntentTransformer, RuleTransformer, create_parser
+from babble.nlp.parser import IntentTransformer, RuleTransformer, create_parser
 
 log = logging.getLogger("babble")
 
@@ -28,7 +28,7 @@ class Understanding:
         processed = []
         for slot in self.slots:
             value = slot["value"]
-            if isinstance(value, list):
+            if isinstance(value, list):  # pragma: no cover
                 value = " ".join(value)
             processed.append(value)
         result["processed"] = " ".join(processed)

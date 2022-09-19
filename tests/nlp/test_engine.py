@@ -1,6 +1,6 @@
 import pytest
 
-from babble.engine import Engine, Understanding
+from babble.nlp.engine import Engine, Understanding
 
 
 def test_intents_are_sorted(engine: Engine):

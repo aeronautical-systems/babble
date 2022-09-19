@@ -1,7 +1,7 @@
 from lark.lark import Lark
 import pytest
 
-from babble.parser import IntentTransformer, RuleTransformer, find_in_phrase
+from babble.nlp.parser import IntentTransformer, RuleTransformer, find_in_phrase
 
 
 @pytest.mark.parametrize(

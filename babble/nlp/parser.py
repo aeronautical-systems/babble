@@ -8,7 +8,7 @@ from lark.visitors import Transformer
 
 
 log = logging.getLogger("babble")
-BABBLE_PATH_GRAMMAR = os.path.join(os.getcwd(), "babble", "grammar.lark")
+BABBLE_PATH_GRAMMAR = os.path.join(os.getcwd(), "babble", "nlp", "grammar.lark")
 
 
 def create_parser() -> Lark:

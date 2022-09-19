@@ -2,8 +2,8 @@ import pytest
 import os
 from lark.lark import Lark
 
-from babble.parser import create_parser, IntentTransformer
-from babble.engine import Engine
+from babble.nlp.parser import create_parser, IntentTransformer
+from babble.nlp.engine import Engine
 
 
 @pytest.fixture
@@ -18,5 +18,5 @@ def transformer() -> IntentTransformer:
 
 @pytest.fixture
 def engine() -> Engine:
-    path = os.path.join(os.getcwd(), "tests", "test.domain.json")
+    path = os.path.join(os.getcwd(), "tests/nlp", "test.domain.json")
     return Engine(path_to_domain_config=path)

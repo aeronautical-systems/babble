@@ -46,6 +46,11 @@ class Understanding:
         else:
             self.slots.append(slot)
 
+    def validity(self) -> float:
+        num_words = len(self.phrase.split())
+        num_slots = len(self.slots)
+        return num_slots / num_words
+
     def is_complete(self) -> bool:
         """Returns true if we found slots at least slots"""
         count = 0
@@ -158,7 +163,7 @@ class Engine:
 
             if slot is not None:
                 understanding.add_slot(slot)
-                if understanding.is_complete():
+                if understanding.is_complete() and understanding.validity() >= 0.5:
                     return understanding
         return None
 

@@ -23,6 +23,9 @@ class Understanding:
         self.required_matched_classifiers: int = required_matched_classifiers
         """Number of required classifieres to be found"""
 
+    def __str__(self):
+        return str(self.as_dict())
+
     def as_dict(self) -> Dict:
         result = {"input": self.phrase, "intent": self.intent, "slots": self.slots}
 

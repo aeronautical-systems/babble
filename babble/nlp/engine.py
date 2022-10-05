@@ -1,4 +1,5 @@
 import json
+import os
 import logging
 import time
 from typing import Optional, Dict, List, Tuple, Union
@@ -67,9 +68,16 @@ class Engine:
     of the phrase based on a given domain"""
 
     def __init__(self, path_to_domain_config: str):
-        self.domain = {}
+        self.domain = [] 
         with open(path_to_domain_config) as f:
-            self.domain = json.load(f)
+            basedir = os.path.dirname(path_to_domain_config)
+            config = json.load(f)
+            if "includes" in config:
+                for path in config["includes"]:
+                    with open(os.path.join(basedir, path)) as i:
+                        self.domain.extend(json.load(i))
+            else:
+                self.domain = config
 
         # Load intents
         self.parser = create_parser()

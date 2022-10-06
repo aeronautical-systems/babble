@@ -174,7 +174,9 @@ class Engine:
 
             if slot is not None:
                 understanding.add_slot(slot)
-                if understanding.is_complete() and understanding.validity() >= 0.5:
+                validity = understanding.validity()
+                log.debug(f"Validity: {validity}")
+                if understanding.is_complete() and validity >= 0.3:
                     return understanding
         return None
 

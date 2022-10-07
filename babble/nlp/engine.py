@@ -52,8 +52,13 @@ class Understanding:
 
     def validity(self) -> float:
         num_words = len(self.phrase.split())
-        num_slots = len(self.slots)
-        return num_slots / num_words
+        num_matches = 0
+        for slot in self.slots:
+            if isinstance(slot["value"], list):
+                num_matches += len(slot["value"])
+            else:
+                num_matches += 1
+        return num_matches / num_words
 
     def is_complete(self) -> bool:
         """Returns true if we found slots at least slots"""

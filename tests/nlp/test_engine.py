@@ -1,6 +1,6 @@
 import pytest
 
-from babble.nlp.engine import Engine, Understanding
+from babble.nlp.engine import Engine, Understanding, SearchTree
 
 
 def test_intents_are_sorted(engine: Engine):
@@ -24,7 +24,8 @@ def test_intents_are_sorted(engine: Engine):
         ("zzz baz bar zzz", False, ""),
     ],
 )
-def test_evaluate_intent(engine: Engine, phrase, understood, intent):
+def test_evaluate_intent(tree: SearchTree, phrase, understood, intent):
+    engine = Engine(tree)
     result = engine.evaluate(phrase)
     if understood:
         assert isinstance(result, Understanding), "Failed to understand"
@@ -37,7 +38,8 @@ def test_evaluate_intent(engine: Engine, phrase, understood, intent):
         assert result is None
 
 
-def test_multi_number(engine: Engine):
+def test_multi_number(tree: SearchTree):
+    engine = Engine(tree)
     result = engine.evaluate("foo one two three")
     assert result is not None
     assert result.intent == "my_foo_multi_number"

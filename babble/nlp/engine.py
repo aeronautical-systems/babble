@@ -57,10 +57,7 @@ class Understanding:
         return count == self.required_matched_classifiers
 
 
-class Engine:
-    """Engine will evaluate a given phrase and tries to understand the meaning
-    of the phrase based on a given domain"""
-
+class SearchTree:
     def __init__(self, path_to_domain_config: str):
         self.domain = {}
         with open(path_to_domain_config) as f:
@@ -68,7 +65,6 @@ class Engine:
 
         # Load intents
         self.parser = create_parser()
-        self.transformer = IntentTransformer()
         self.intents: List[Dict] = self._load_intents()
         self.entities: Dict[str, Dict] = self._load_entities()
 
@@ -91,6 +87,17 @@ class Engine:
             if element.get("type") == "entity":
                 entities[element.get("name")] = element
         return entities
+
+
+class Engine:
+    """Engine will evaluate a given phrase and tries to understand the meaning
+    of the phrase based on a given domain"""
+
+    def __init__(self, SearchTree):
+        self.transformer = IntentTransformer()
+        self.parser = create_parser()
+        self.intents: List[Dict] = SearchTree.intents
+        self.entities: Dict[str, Dict] = SearchTree.entities
 
     def evaluate(self, phrase: str) -> Optional[Understanding]:
         """Returns the Understanding of the given phrase. If phrase could not

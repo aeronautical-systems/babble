@@ -2,7 +2,7 @@ import os
 from typing import List, Dict, Optional
 import logging
 
-from Levenshtein._levenshtein import distance
+from Levenshtein import distance
 from lark.lark import Lark
 from lark.visitors import Transformer
 

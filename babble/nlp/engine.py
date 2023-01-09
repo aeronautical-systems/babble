@@ -1,4 +1,5 @@
 import json
+import os
 import logging
 import time
 from typing import Optional, Dict, List, Tuple, Union
@@ -21,6 +22,9 @@ class Understanding:
         phrase"""
         self.required_matched_classifiers: int = required_matched_classifiers
         """Number of required classifieres to be found"""
+
+    def __str__(self):
+        return str(self.as_dict())
 
     def as_dict(self) -> Dict:
         result = {"input": self.phrase, "intent": self.intent, "slots": self.slots}
@@ -46,6 +50,16 @@ class Understanding:
         else:
             self.slots.append(slot)
 
+    def validity(self) -> float:
+        num_words = len(self.phrase.split())
+        num_matches = 0
+        for slot in self.slots:
+            if isinstance(slot["value"], list):
+                num_matches += len(slot["value"])
+            else:
+                num_matches += 1
+        return num_matches / num_words
+
     def is_complete(self) -> bool:
         """Returns true if we found slots at least slots"""
         count = 0
@@ -62,9 +76,16 @@ class Engine:
     of the phrase based on a given domain"""
 
     def __init__(self, path_to_domain_config: str):
-        self.domain = {}
+        self.domain = [] 
         with open(path_to_domain_config) as f:
-            self.domain = json.load(f)
+            basedir = os.path.dirname(path_to_domain_config)
+            config = json.load(f)
+            if "includes" in config:
+                for path in config["includes"]:
+                    with open(os.path.join(basedir, path)) as i:
+                        self.domain.extend(json.load(i))
+            else:
+                self.domain = config
 
         # Load intents
         self.parser = create_parser()
@@ -158,7 +179,9 @@ class Engine:
 
             if slot is not None:
                 understanding.add_slot(slot)
-                if understanding.is_complete():
+                validity = understanding.validity()
+                log.debug(f"Validity: {validity}")
+                if understanding.is_complete() and validity >= 0.3:
                     return understanding
         return None
 
@@ -185,7 +208,7 @@ class Engine:
             rule_transformer = RuleTransformer(phrase=phrase_to_test)
             found, tag = rule_transformer.transform(tree)
             if found:
-                phrase = phrase.replace(phrase_to_test, "")
+                phrase = phrase.replace(phrase_to_test, "", 1)
                 slot = dict(name=get_entity_name(classifier), value=found)
                 if tag:
                     slot["tag"] = tag

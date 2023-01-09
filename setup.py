@@ -40,7 +40,7 @@ setup(
     include_package_data=True,
     keywords='babble',
     name='babble',
-    packages=find_packages(include=['babble', 'babble.*']),
+    packages=['babble', 'babble.nlp'],
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/toirl/babble',

@@ -2,13 +2,14 @@ import os
 from typing import List, Dict, Optional
 import logging
 
-from Levenshtein._levenshtein import distance
+from babble import PACKAGE_ROOT_DIR
+from rapidfuzz.distance import Levenshtein
 from lark.lark import Lark
 from lark.visitors import Transformer
 
 
 log = logging.getLogger("babble")
-BABBLE_PATH_GRAMMAR = os.path.join(os.getcwd(), "babble", "nlp", "grammar.lark")
+BABBLE_PATH_GRAMMAR = os.path.join(PACKAGE_ROOT_DIR, "babble", "nlp", "grammar.lark")
 
 
 def create_parser() -> Lark:
@@ -47,7 +48,7 @@ def find_in_phrase(phrase: str, to_find: str) -> bool:
     for word in reversed(phrase.split()):
         words_to_test.insert(0, word)
         phrase_to_test = " ".join(words_to_test)
-        d = distance(phrase_to_test, to_find)
+        d = Levenshtein.distance(phrase_to_test, to_find)
         if d <= max_distance:
             log.debug(f"{phrase_to_test} -> {to_find} with distance {d}/{max_distance}")
             return True  # Fine! We found it with some fuzzyness.

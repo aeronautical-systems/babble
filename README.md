@@ -1,6 +1,7 @@
 # babble
 
-Babble is a simple package for natural language understanding (NLU).
+[Babble](https://gitlab.com/irlaender/babble) is a simple package for natural
+language understanding (NLU).
 
 ## Features
 

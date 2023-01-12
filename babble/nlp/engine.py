@@ -76,7 +76,7 @@ class Engine:
     of the phrase based on a given domain"""
 
     def __init__(self, path_to_domain_config: str):
-        self.domain = [] 
+        self.domain = []
         with open(path_to_domain_config) as f:
             basedir = os.path.dirname(path_to_domain_config)
             config = json.load(f)
@@ -87,11 +87,24 @@ class Engine:
             else:
                 self.domain = config
 
-        # Load intents
+        # Do some preloading of intents with classifiers and prebuild parse
+        # trees for rules.
         self.parser = create_parser()
         self.transformer = IntentTransformer()
-        self.intents: List[Dict] = self._load_intents()
         self.entities: Dict[str, Dict] = self._load_entities()
+        self.intents: List[Dict] = self._load_intents()
+        self.classifiers_rule_trees: Dict = self._load_classifier_rule_trees()
+
+    def _load_classifier_rule_trees(self) -> Dict:
+        rules = {}
+        for intent in self.intents:
+            for classifier in intent.get("classifiers", []):
+                if classifier in rules:
+                    continue
+                rule = self._resolve_rule_from_classifier(classifier=classifier)
+                tree = self.parser.parse(rule)
+                rules[classifier] = tree
+        return rules
 
     def _load_intents(self) -> List[Dict]:
         def get_number_entities(rule: str) -> int:
@@ -101,6 +114,10 @@ class Engine:
         intents: List[Dict] = []
         for element in self.domain:
             if element.get("type") == "intent":
+                rule = element.get("rule", "")
+                tree = self.parser.parse(rule)
+                classifiers = IntentTransformer().transform(tree)
+                element["classifiers"] = self._expand_classifiers(classifiers, [])
                 intents.append(element)
         return sorted(
             intents, key=lambda x: get_number_entities(x.get("rule", "")), reverse=True
@@ -152,25 +169,22 @@ class Engine:
         return expanded_classifiers
 
     def _evaluate_intent(self, intent: Dict, phrase: str) -> Optional[Understanding]:
-        rule = intent.get("rule", "")
         intention = intent.get("name", "")
         log.debug("#" * 68)
         log.debug(f"{intention} -> {phrase}")
         log.debug("#" * 68)
 
-        tree = self.parser.parse(rule)
-        classifiers = IntentTransformer().transform(tree)
-        expanded_classifiers = self._expand_classifiers(classifiers, [])
+        classifiers = intent.get("classifiers", [])
 
         understanding = Understanding(
             phrase,
             intent=intention,
-            required_matched_classifiers=len(expanded_classifiers),
+            required_matched_classifiers=len(classifiers),
         )
 
         # Iterate of every entity in the intent
         rest_of_phrase_to_test = phrase
-        for classifier in expanded_classifiers:
+        for classifier in classifiers:
 
             # Evaluate and update the remaining phrase to test.
             slot, rest_of_phrase_to_test = self._evaluate_classifier(
@@ -197,14 +211,13 @@ class Engine:
     ) -> Tuple[Optional[Dict], str]:
         log.debug("*" * 68)
 
-        rule = self._resolve_rule_from_classifier(classifier=classifier)
-        tree = self.parser.parse(rule)
+        tree = self.classifiers_rule_trees[classifier]
 
         words_to_test = []
         for word in phrase.split():
             words_to_test.append(word)
             phrase_to_test = " ".join(words_to_test)
-            log.debug(f"{phrase_to_test} == {rule}")
+            log.debug(f"{phrase_to_test} == {classifier}")
             rule_transformer = RuleTransformer(phrase=phrase_to_test)
             found, tag = rule_transformer.transform(tree)
             if found:

@@ -20,7 +20,7 @@ Install babble.
 
 Use babble as cli:
 
-        babble --domain path/to/domain.json "Hello Word"
+        babble-nlp --domain path/to/domain.json "Hello Word"
 
 ### Lib
 

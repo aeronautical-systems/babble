@@ -15,9 +15,7 @@ def get_package_root() -> str:  # pragma: no cover
     """
     packages = sys.path
     dir_path = [
-        os.path.abspath(package)
-        for package in packages
-        if package.endswith("babble")
+        os.path.abspath(package) for package in packages if package.endswith("babble")
     ]
     if dir_path:
         return dir_path[0]

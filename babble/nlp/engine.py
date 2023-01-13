@@ -118,6 +118,7 @@ class Engine:
                 tree = self.parser.parse(rule)
                 classifiers = IntentTransformer().transform(tree)
                 element["classifiers"] = self._expand_classifiers(classifiers, [])
+                element.update({"len_rule": len(element["rule"].split(" "))})
                 intents.append(element)
         return sorted(
             intents, key=lambda x: get_number_entities(x.get("rule", "")), reverse=True
@@ -134,10 +135,11 @@ class Engine:
         """Returns the Understanding of the given phrase. If phrase could not
         be understood None is returnd"""
 
-        # Try to match the given phrase with all intents. As soon as a matching
-        # intent is found return it.
+        # Try to match the given phrase with intents. Intents are filtered based on rule length.
+        #  As soon as a matching intent is found return it.
         start = time.perf_counter()
-        for intent in self.intents:
+        intents_to_test = self._filter_intents_by_lenght(phrase)
+        for intent in intents_to_test:
             understanding = self._evaluate_intent(intent, phrase)
             if understanding is not None:
                 stop = time.perf_counter()
@@ -227,6 +229,14 @@ class Engine:
                     slot["tag"] = tag
                 return slot, phrase
         return None, phrase
+
+    def _filter_intents_by_lenght(self, phrase: str) -> List[Dict]:
+        phrase_len = len(phrase.split(" "))
+        min_lim, max_lim = (phrase_len - 3, phrase_len + 3)
+        intents_to_test = [
+            intent for intent in self.intents if min_lim < intent["len_rule"] < max_lim
+        ]
+        return intents_to_test
 
 
 def get_entity_name(element: str):

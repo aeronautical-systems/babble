@@ -130,21 +130,42 @@ class Engine:
                 entities[element.get("name")] = element
         return entities
 
+    def _get_best_match(self, alternatives: List[Understanding]):
+        alternatives_len = {
+            alternative: alternative.required_matched_classifiers
+            for alternative in alternatives
+        }
+        max_len = max(alternatives_len.values())
+        longest_alternatives = [
+            key for key in alternatives_len.keys() if alternatives_len[key] == max_len
+        ]
+        if len(longest_alternatives) == 1:
+            return longest_alternatives[0]
+        else:
+            alternatives_validity = {
+                alternative: alternative.validity
+                for alternative in longest_alternatives
+            }
+            alternative = max(alternatives_validity, key=alternatives_validity.get)
+            return alternative
+
     def evaluate(self, phrase: str) -> Optional[Understanding]:
         """Returns the Understanding of the given phrase. If phrase could not
         be understood None is returnd"""
-
-        # Try to match the given phrase with all intents. As soon as a matching
-        # intent is found return it.
+        alternatives = []
         start = time.perf_counter()
         for intent in self.intents:
             understanding = self._evaluate_intent(intent, phrase)
             if understanding is not None:
-                stop = time.perf_counter()
-                log.info(
-                    f"Evaluated {len(self.intents)} intents in {stop - start:0.4f} seconds"
-                )
-                return understanding
+                alternatives.append(understanding)
+
+        if alternatives:
+            understanding = self._get_best_match(alternatives)
+            stop = time.perf_counter()
+            log.info(
+                f"Evaluated {len(self.intents)} intents in {stop - start:0.4f} seconds"
+            )
+            return understanding
         stop = time.perf_counter()
         log.info(
             f"Evaluated {len(self.intents)} intents in {stop - start:0.4f} seconds"

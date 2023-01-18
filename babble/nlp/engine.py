@@ -144,23 +144,26 @@ class Engine:
             return longest_alternatives[0]
         else:
             alternatives_validity = {
-                alternative: alternative.validity
+                alternative: alternative.validity()
                 for alternative in longest_alternatives
             }
+            log.info(
+                f"Alternative intents{[(alternative.intent, alternative.validity()) for alternative in alternatives_validity]}"
+            )
             alternative = max(alternatives_validity, key=alternatives_validity.get)
             return alternative
 
     def evaluate(self, phrase: str) -> Optional[Understanding]:
         """Returns the Understanding of the given phrase. If phrase could not
         be understood None is returnd"""
-    
+
         # Try to match the given phrase with intents.
         #
-        # For performance improvements intents are filtered based on rule length 
-        # so that rules of intent matches nearly the length of the phrase. 
-        # Rules which are too long or short might match, but are not taken into 
+        # For performance improvements intents are filtered based on rule length
+        # so that rules of intent matches nearly the length of the phrase.
+        # Rules which are too long or short might match, but are not taken into
         # account anyway because of the validity calculation of the match.
-        
+
         alternatives = []
         start = time.perf_counter()
         intents_to_test = self._filter_intents_by_lenght(phrase)

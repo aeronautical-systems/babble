@@ -1,4 +1,5 @@
 import os
+import re
 from typing import List, Dict, Optional
 import logging
 
@@ -32,13 +33,14 @@ def find_in_phrase(phrase: str, to_find: str) -> bool:
     levensthein is done"""
 
     # Try to get a direct match
-    if phrase.find(to_find) > -1:
+    regex=re.compile(r"\b"+to_find +r"\b")
+    if re.match(regex, phrase):
         return True  # Fine! we have a exact match
 
     # Ok, lets do a fuzzy match.
     words_to_test = []
     max_distance = int(len(to_find) / 5)
-
+    
     # The fuzzy match is done my building the phrase in reversed order! This is
     # because the phrase might have grown with every new call:
     # foo -> foo bar -> foo bar baz

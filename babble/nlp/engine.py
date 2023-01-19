@@ -131,33 +131,59 @@ class Engine:
                 entities[element.get("name")] = element
         return entities
 
+    def _get_best_match(self, alternatives: List[Understanding]):
+        alternatives_len = {
+            alternative: alternative.required_matched_classifiers
+            for alternative in alternatives
+        }
+        max_len = max(alternatives_len.values())
+        longest_alternatives = [
+            key for key in alternatives_len.keys() if alternatives_len[key] == max_len
+        ]
+        if len(longest_alternatives) == 1:
+            return longest_alternatives[0]
+        else:
+            alternatives_validity = {
+                alternative: alternative.validity()
+                for alternative in longest_alternatives
+            }
+            log.debug(
+                f"Alternative intents{[(alternative.intent, alternative.validity()) for alternative in alternatives_validity]}"
+            )
+            alternative = max(alternatives_validity, key=alternatives_validity.get)
+            return alternative
+
     def evaluate(self, phrase: str) -> Optional[Understanding]:
         """Returns the Understanding of the given phrase. If phrase could not
         be understood None is returnd"""
 
+        understandings = []
+        start = time.perf_counter()
+
         # Try to match the given phrase with intents.
         #
-        # For performance improvements intents are filtered based on rule length 
-        # so that rules of intent matches nearly the length of the phrase. 
-        # Rules which are too long or short might match, but are not taken into 
+        # For performance improvements intents are filtered based on rule length
+        # so that rules of intent matches nearly the length of the phrase.
+        # Rules which are too long or short might match, but are not taken into
         # account anyway because of the validity calculation of the match.
-        #
-        # As soon as a matching intent is found return it.
-        start = time.perf_counter()
         intents_to_test = self._filter_intents_by_lenght(phrase)
+
+        # Get all understanding
         for intent in intents_to_test:
             understanding = self._evaluate_intent(intent, phrase)
             if understanding is not None:
-                stop = time.perf_counter()
-                log.info(
-                    f"Evaluated {len(self.intents)} intents in {stop - start:0.4f} seconds"
-                )
-                return understanding
+                understandings.append(understanding)
+
+        if understandings:
+            result = self._get_best_match(understandings)
+        else:
+            result = None
+
         stop = time.perf_counter()
-        log.info(
+        log.debug(
             f"Evaluated {len(self.intents)} intents in {stop - start:0.4f} seconds"
         )
-        return None
+        return result
 
     def _expand_classifiers(
         self, classifiers: List[str], expanded_classifiers: List[str]

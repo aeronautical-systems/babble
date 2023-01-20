@@ -33,7 +33,7 @@ def find_in_phrase(phrase: str, to_find: str) -> bool:
     levensthein is done"""
 
     # Try to get a direct match
-    regex=re.compile(r"\b"+to_find +r"\b")
+    regex=re.compile(r"\b{to_find}\b")
     if re.match(regex, phrase):
         return True  # Fine! we have a exact match
 

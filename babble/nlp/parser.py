@@ -25,13 +25,37 @@ def dequote(string: str) -> str:
         return string.lstrip('"').rstrip('"')
     else:
         return string
-        
-#TODO adjust grammar to handle apostrophes
-def prepare_phrase(phrase:str) ->str:
-    pattern =  re.compile(r"\'")
-    phrase = re.sub(pattern, " ", phrase)
-    phrase = phrase.replace("  ", " ")
+
+
+# TODO adjust grammar to handle apostrophes
+def remove_apostrophe(phrase: str) -> str:
+    dequoted_phrase = False
+    dequoted_word = False
+    phrase = phrase.strip()
+    if phrase.startswith("'") and phrase.endswith("'"):
+        phrase = dequote(phrase)
+        dequoted_phrase = True
+    words = phrase.split(" ")
+    phrase_as_dict = {key: "" for key in list(range(len(words)))}
+    for key in phrase_as_dict.keys():
+        phrase_as_dict.update({key: words[key]})
+
+    key_list = list(phrase_as_dict.keys())
+    for key in key_list:
+        word = phrase_as_dict[key]
+        if word.startswith("'") and word.endswith("'"):
+            word = dequote(word).strip()
+            dequoted_word = True
+        word = word.split("'")[0]
+        if dequoted_word:
+            word = "'" + word + "'"
+            dequoted_word = False
+        phrase_as_dict.update({key: word})
+    phrase = " ".join(list(phrase_as_dict.values()))
+    if dequoted_phrase:
+        phrase = "'" + phrase + "'"
     return phrase
+
 
 def find_in_phrase(phrase: str, to_find: str) -> bool:
     """Will return True if `to_find` is found in `phrase`. The search is done
@@ -39,14 +63,14 @@ def find_in_phrase(phrase: str, to_find: str) -> bool:
     levensthein is done"""
 
     # Try to get a direct match
-    regex=re.compile(r"\b{to_find}\b")
+    regex = re.compile(r"\b" + to_find + r"\b")
     if re.match(regex, phrase):
         return True  # Fine! we have a exact match
 
     # Ok, lets do a fuzzy match.
     words_to_test = []
     max_distance = int(len(to_find) / 5)
-    
+
     # The fuzzy match is done my building the phrase in reversed order! This is
     # because the phrase might have grown with every new call:
     # foo -> foo bar -> foo bar baz

@@ -67,7 +67,7 @@
 	{
 		"type": "intent",
 		"name": "apostrophe",
-		"rule": "here s apostrophe"
+		"rule": "here apostrophe"
 	}
 
 ]

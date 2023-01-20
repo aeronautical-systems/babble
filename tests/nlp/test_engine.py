@@ -20,7 +20,7 @@ def test_intents_are_sorted(engine: Engine):
         ("foo bar xxx", True, "my_foo_bar_intent"),
         ("xxx foo bar baz", True, "my_xxx_foo_bar_baz_intent"),
         ("zzz foo bar baz", True, "my_foo_bar_baz_intent"),
-        ("here 's apostroph", True, "apostrophe"),
+        ("here's apostrophe", True, "apostrophe"),
         ("zzz foo baz bar", True, "my_foo_bar_intent"),
         ("zzz baz bar zzz", False, ""),
     ],

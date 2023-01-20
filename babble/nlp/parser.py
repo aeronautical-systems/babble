@@ -25,7 +25,11 @@ def dequote(string: str) -> str:
         return string.lstrip('"').rstrip('"')
     else:
         return string
-
+#TODO adjust grammar to handle apostrophes
+def prepare_phrase(phrase:str) ->str:
+    phrase = phrase.replace("'", " ")
+    phrase = phrase.replace("  ", " ")
+    return phrase
 
 def find_in_phrase(phrase: str, to_find: str) -> bool:
     """Will return True if `to_find` is found in `phrase`. The search is done

@@ -4,7 +4,7 @@ import logging
 import time
 from typing import Optional, Dict, List, Tuple, Union
 
-from babble.nlp.parser import IntentTransformer, RuleTransformer, create_parser
+from babble.nlp.parser import IntentTransformer, RuleTransformer, create_parser, prepare_phrase
 
 log = logging.getLogger("babble")
 
@@ -159,7 +159,7 @@ class Engine:
 
         understandings = []
         start = time.perf_counter()
-
+        phrase = prepare_phrase(phrase)
         # Try to match the given phrase with intents.
         #
         # For performance improvements intents are filtered based on rule length

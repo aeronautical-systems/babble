@@ -58,12 +58,17 @@ class Understanding:
     def validity(self) -> float:
         num_words = len(self.phrase.split())
         num_matches = 0
+        distances = 0
         for slot in self.slots:
+            distances += slot["distance"]
             if isinstance(slot["value"], list):
                 num_matches += len(slot["value"])
             else:
                 num_matches += 1
-        return num_matches / num_words
+        # TODO write a proper function and test it
+        distance = distances / num_words
+        validity = num_matches / num_words - distance
+        return validity
 
     def is_complete(self) -> bool:
         """Returns true if we found slots at least slots"""
@@ -165,6 +170,7 @@ class Engine:
         understandings = []
         start = time.perf_counter()
         phrase = remove_apostrophe(phrase)
+        print(phrase)
         # Try to match the given phrase with intents.
         #
         # For performance improvements intents are filtered based on rule length
@@ -261,7 +267,11 @@ class Engine:
             found, tag = rule_transformer.transform(tree)
             if found:
                 phrase = phrase.replace(phrase_to_test, "", 1)
-                slot = dict(name=get_entity_name(classifier), value=found)
+                slot = dict(
+                    name=get_entity_name(classifier),
+                    value=found,
+                    distance=rule_transformer.distance,
+                )
                 if tag:
                     slot["tag"] = tag
                 return slot, phrase

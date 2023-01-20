@@ -57,7 +57,7 @@ def remove_apostrophe(phrase: str) -> str:
     return phrase
 
 
-def find_in_phrase(phrase: str, to_find: str) -> bool:
+def find_in_phrase(phrase: str, to_find: str) -> Optional[int | bool]:
     """Will return True if `to_find` is found in `phrase`. The search is done
     trying a exact match first. If it does not match than a fuzzy match using
     levensthein is done"""
@@ -65,7 +65,7 @@ def find_in_phrase(phrase: str, to_find: str) -> bool:
     # Try to get a direct match
     regex = re.compile(r"\b" + to_find + r"\b")
     if re.match(regex, phrase):
-        return True  # Fine! we have a exact match
+        return 0  # Fine! we have a exact match
 
     # Ok, lets do a fuzzy match.
     words_to_test = []
@@ -83,8 +83,8 @@ def find_in_phrase(phrase: str, to_find: str) -> bool:
         d = Levenshtein.distance(phrase_to_test, to_find)
         if d <= max_distance:
             log.debug(f"{phrase_to_test} -> {to_find} with distance {d}/{max_distance}")
-            return True  # Fine! We found it with some fuzzyness.
-    return False  # Nothing found
+            return d  # Fine! We found it with some fuzzyness.
+    return None  # Nothing found
 
 
 class IntentTransformer(Transformer):
@@ -102,17 +102,26 @@ class RuleTransformer(Transformer):
     def __init__(self, phrase: str, visit_tokens: bool = True) -> None:
         super().__init__(visit_tokens)
         self.phrase = phrase
+        self.distance = None
         self.tag: Optional[str] = None
 
     def rule(self, toks):
-        if find_in_phrase(self.phrase, " ".join(t for t in toks if t is not None)):
+        distance = find_in_phrase(
+            self.phrase, " ".join(t for t in toks if t is not None)
+        )
+        if distance:
+            self.distance = distance
             return toks
         return None
 
     def subst(self, toks):
-        if toks[0][0] and find_in_phrase(self.phrase, toks[0][0]):
-            self.phrase = toks[1]
-            return toks[1]
+
+        if toks[0][0]:
+            distance = find_in_phrase(self.phrase, toks[0][0])
+            if distance:
+                self.phrase = toks[1]
+                self.distance = distance
+                return toks[1]
         return toks[0][0]
 
     def tagging(self, toks):
@@ -126,7 +135,9 @@ class RuleTransformer(Transformer):
         for tok in toks:
             if tok is None:
                 continue
-            if find_in_phrase(self.phrase, tok):
+            distance = find_in_phrase(self.phrase, tok)
+            if distance:
+                self.distance = distance
                 return tok
         return None
 

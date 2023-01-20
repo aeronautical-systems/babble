@@ -25,9 +25,11 @@ def dequote(string: str) -> str:
         return string.lstrip('"').rstrip('"')
     else:
         return string
+        
 #TODO adjust grammar to handle apostrophes
 def prepare_phrase(phrase:str) ->str:
-    phrase = phrase.replace("'", " ")
+    pattern =  re.compile(r"\'")
+    phrase = re.sub(pattern, " ", phrase)
     phrase = phrase.replace("  ", " ")
     return phrase
 

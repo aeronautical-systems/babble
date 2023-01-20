@@ -63,5 +63,11 @@
 		"type": "entity",
 		"name": "triplenumber",
 		"rule": "<number> <number> <number>"
+	},
+	{
+		"type": "intent",
+		"name": "apostrophe",
+		"rule": "here apostrophe"
 	}
+
 ]
